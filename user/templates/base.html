@@ -14,7 +14,7 @@
     <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/dashboard/">
 
     
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1/dist/chart.umd.min.js"></script>
     <!-- Bootstrap core CSS -->
 <link href="/docs/5.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
@@ -28,9 +28,22 @@
 <meta name="theme-color" content="#7952b3">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.5.0/css/bootstrap.min.css">
+<!-- CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
+
+<!-- JavaScript -->
+{% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/js/bootstrap.min.js"></script> {% endcomment %}
 
     
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<link rel="stylesheet" href="select2.css">
+<link rel="stylesheet" href="select2-bootstrap.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.min.css">
 
 
     <style>
@@ -47,31 +60,129 @@
           font-size: 3.5rem;
         }
       }
+
+      @media (max-width: 768px) {
+        #sidebarMenu {
+          background-color: rgba(0, 0, 0, 0.4) !important; /* Adjust the opacity and color as needed */
+          z-index: 9999;
+          position: fixed;
+          width: 100%;
+          height: 100%;
+          top: 0;
+          left: 0;
+          margin-top : 20px;
+        
+        }
+
+        .nav-link{
+          color:white;
+          font-size: 20px;
+        }
+
+     
+
+      }
+
+      .footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 60px; /* Adjust the height as needed */
+        background-color: red;
+        
+      }
+      .blink {
+        animation: blink 1s steps(1, end) infinite;
+      }
+      
+      @keyframes blink {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      .inline-list > a {
+        display: inline-block;
+        margin-left: 10px; /* Adjust the spacing between the links if needed */
+    }
+
+    .inline-list{
+      margin-left: -10px;
+    }
+
+    .notification {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .countValue {
+      position: absolute;
+      top: -17px;
+      left: 65%;
+      transform: translateX(-50%);
+      
+      color: black;
+      padding: 5px;
+      border-radius: 50%;
+      font-size: 18px;
+    }
+
+    #sidebarMenu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 250px; /* Adjust the width as needed */
+      background-color: #f8f9fa; /* Adjust the background color as needed */
+      /* Add any other desired styles */
+    }
+    
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    
+    body {
+      padding-top: 56px; /* Adjust the top padding to match the height of the navbar */
+    }
+    
+    
     </style>
 
     
-    <!-- Custom styles for this template -->
+    
     <link href="dashboard.css" rel="stylesheet">
   </head>
   <body>
-    
+
     <header class="navbar navbar-dark sticky-top bg-danger flex-md-nowrap p-0 shadow position-fixed w-100">
       <button class="navbar-toggler d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <h4 class="navbar-brand col-md-3 col-lg-2 me-0 px-2">Welcome {{ request.user.username }}</h4>
       <div class="mx-10">
-        {% if request.user.is_technician %}
-          {% if tickets.count == 0 %}
-            <a class="nav-link mx-30 text-light" href={% url 'logout_user' %}>
-              <span class="badge bg-dark">{{ tickets.count }}</span>
-            </a>
-          {% else %}
-            <a class="nav-link mx-30 text-light" href={% url 'ticket_queue' %}>
-              <span class="badge bg-dark blink">{{ tickets.count }}</span>
-            </a>
-          {% endif %}
-        {% endif %}
+        
+           {% if request.user.is_technician %}
+          <a href="{% url 'ticket_queue' %}">
+            {% if tickets.count > 0 %}
+              <span class="notification blink"><i style="color: #FFD700; " class="fas fa-bell fa-lg"></i> <p class="countValue">  {{ tickets.count }} </p> </span>
+            {% else %}
+              <span class="notification empty"><i style="color: #FFD700; " class="fas fa-bell fa-lg"></i></span>
+            {% endif %}
+          </a>
+          {% endif %} 
+
+        
+      
       </div>
       <div class="navbar-nav">
         <div class="nav-item text-nowrap">
@@ -86,63 +197,51 @@
           <div id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light collapse position-fixed h-100">
             <div class="position-sticky pt-3">
               <ul class="nav flex-column">
-                <li class="nav-item">
+                <li class="nav-item mt-5">
                   <a class="nav-link active" aria-current="page" href="{%url 'home'%}">
                     <span data-feather="home"></span>
                     Dashboard
                   </a>
                 </li>
                 <li class="nav-item">
-                  {% comment %} <a class="nav-link" href="{%url 'add_ticket'%}"> {% endcomment %}
+                  <a class="nav-link" href="{%url 'add_ticket'%}">
                     <span data-feather="file"></span>
                     Create Ticket
                   </a>
                 </li>
                 <li class="nav-item">
-                  {% comment %} <a class="nav-link" href="{%url 'all_tickets'%}"> {% endcomment %}
+                  <a class="nav-link" href="{% url 'all_ticket_created'  %}">
+
                     <span data-feather="shopping-cart"></span>
                     View Ticket
                   </a>
                 </li>
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Ticket Info
-                  </a>
-                  <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
-                    {% comment %} <li><a class="dropdown-item" href="{% url 'all_ticket_created' %}">All Ticket Created</a></li> {% endcomment %}
-                    <!-- Add more dropdown items if needed -->
-                  </ul>
-                </li>
+                
                 <li class="nav-item">
-                  {% comment %} <a class="nav-link" href="{% url 'ticket_to_claim' %}"> {% endcomment %}
+                  <a class="nav-link" href="{% url 'ticket_to_claim_cs' %}">
                     <span data-feather="shopping-cart"></span>
                     Unassigned Ticket
                   </a>
                 </li>
+               
                 <li class="nav-item">
-                  <a class="nav-link" href="#">
-                    <span data-feather="bar-chart-2"></span>
-                    Reports
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" href="#">
+                  <a class="nav-link" href="{% url 'ticket_intergration_cs' %}">
                     <span data-feather="layers"></span>
                     Integrations
                   </a>
                 </li>
               </ul>
               <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                <span>Saved reports</span>
+                <span>Leave/Time off</span>
                 <a class="link-secondary" href="#" aria-label="Add a new report">
                   <span data-feather="plus-circle"></span>
                 </a>
               </h6>
               <ul class="nav flex-column mb-2">
                 <li class="nav-item">
-                  <a class="nav-link" href="#">
+                  <a class="nav-link" href="{% url 'create_leave' %}">
                     <span data-feather="file-text"></span>
-                    Current month
+                    Create Leave
                   </a>
                 </li>
                 <li class="nav-item">
@@ -157,7 +256,7 @@
     
           <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-              <h1 class="h2">Dashboard</h1>
+              <h1 class="h2  mt-5" >Dashboard</h1>
               <div class="btn-toolbar mb-2 mb-md-0">
                 <div class="form-group">
                   {% for message in messages %}
@@ -169,6 +268,33 @@
               </div>
             </div>
             <h1>Hello {{ user.username }}! Your role is Customer Service</h1>
+
+            {% block content_customerCare %}
+            {% endblock %}
+            
+            {% block content_allTicket %}
+            {% endblock %}
+
+            {% block content_ticket_to_claim %}
+            {% endblock %}
+            {% block content_ticket_integration %}
+            {% endblock %}
+            {% block content_update %}
+        {% endblock %}
+
+        {% block content_create_leave %}
+        {% endblock %}
+
+        {% block content_create_dept %}
+        {% endblock %}
+
+        {% block content_create_employe %}
+        {% endblock %}
+
+        {% block content_leave_pendi %}
+        {% endblock %}
+
+
             
           </main>
         </div>
@@ -181,13 +307,14 @@
 
       {% elif  request.user.is_technician %}
 
-<div class="container-fluid">
+<div class="container-fluid ">
   <div class="row">
-    <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+    <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse " ">
       <div class="position-sticky pt-3">
         <ul class="nav flex-column">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/">
+          <div ></div>
+          <li  class="nav-item mt-5">
+            <a class="nav-link active" aria-current="page" href="{% url 'home' %}">
               <span data-feather="home"></span>
               Dashboard
             </a>
@@ -206,44 +333,39 @@
               Ticket In Progress
             </a>
           </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Manage Ticket
-            </a>
-            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
-              <li><a class="dropdown-item" href="{% url 'all_ticket_closed'%}">Closed Ticket</a></li>
-               <li><a class="dropdown-item" href="{% url 'all_postpone_ticket' %}">All Postponed Ticket</a></li>
-              <li><a class="dropdown-item" href="{% url 'all_cancel_ticket' %}">All Ticket Cancel</a></li> 
-            </ul>
-          </li>
+          
           <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="{% url 'all_ticket_created_tech' %}">
+
               <span data-feather="bar-chart-2"></span>
               Reports
             </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'ticket_to_claim' %}">
-              <span data-feather="shopping-cart"></span>
-              Unassigned Ticket
+          <li class="nav-item inline-list">
+        
+            <a class="nav-link" href="{% url 'ticket_to_claim_tech' %}">
+             
+               Unassigned Ticket
             </a>
+            
+              {% if ticketUnassigned.count > 0 %}
+                <span class="notification blink"><i style="color: #FFD700; " class="fas fa-bell fa-lg"></i> <p class="countValue"> {{ ticketUnassigned.count }} </p></span>
+              {% else %}
+                <span class="notification empty"><i style="color: #FFD700; " class="fas fa-bell fa-lg"></i></span>
+              {% endif %}
+            
           </li>
-          <li class="nav-item">
-            {% comment %} <a class="nav-link" href="{% url 'create_department' %}"> {% endcomment %}
-              <span data-feather="shopping-cart"></span>
-              Request Leave
-            </a>
-          </li>
-          <li class="nav-item">
+         
+          {% comment %} <li class="nav-item">
             <a class="nav-link" href="#">
               <span data-feather="layers"></span>
               Integrations
             </a>
-          </li>
+          </li> {% endcomment %}
         </ul>
 
         <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-          <span>Saved reports</span>
+          <span>Leave/Time off</span>
           <a class="link-secondary" href="#" aria-label="Add a new report">
             <span data-feather="plus-circle"></span>
           </a>
@@ -269,7 +391,7 @@
 
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
       <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Dashboard</h1>
+        <h1 class="h2  mt-5">Dashboard</h1>
         <div class="btn-toolbar mb-2 mb-md-0">
           <div class="form-group">
             {% for message in messages %}
@@ -286,7 +408,37 @@
 
       
         <h1> hello {{ user.username }} your role is Technician</h1>
-    
+        {% block content_ticket_queu %}
+        {% endblock %}
+
+        {% block content_technicianUpdate %}
+        {% endblock %}
+
+        {% block content_ticketdetails %}
+        {% endblock %}
+
+        {% block content_ticketinprogress %}
+        {% endblock %}
+
+        {% block content_all_ticket_created_tech %}
+        {% endblock %}
+
+        {% block content_ticket_to_claim_tech %}
+        {% endblock %}
+       
+        {% block content_create_leave_tech %}
+        {% endblock %}
+
+        {% block content_create_dept_tech %}
+        {% endblock %}
+
+        {% block content_create_employe_tech %}
+        {% endblock %}
+
+        {% block content_leave_pendi_tech %}
+        {% endblock %}
+
+        
 
     
     
@@ -306,7 +458,7 @@
     <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
       <div class="position-sticky pt-3">
         <ul class="nav flex-column">
-          <li class="nav-item">
+          <li class="nav-item mt-5">
             <a class="nav-link active" aria-current="page" href="/">
               <span data-feather="home"></span>
               Dashboard
@@ -393,7 +545,7 @@
 
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
       <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Dashboard</h1>
+        <h1 class="h2  mt-5">Dashboard</h1>
         <div class="btn-toolbar mb-2 mb-md-0">
           <div class="form-group">
 
@@ -423,7 +575,7 @@
         <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
           <div class="position-sticky pt-3">
             <ul class="nav flex-column">
-              <li class="nav-item">
+              <li class="nav-item mt-5">
                 <a class="nav-link active" aria-current="page" href="/">
                   <span data-feather="home"></span>
                   Dashboard
@@ -510,7 +662,7 @@
     
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <h1 class="h2">Dashboard</h1>
+            <h1 class="h2  mt-5">Dashboard</h1>
             <div class="btn-toolbar mb-2 mb-md-0">
               <div class="form-group">
     
@@ -542,41 +694,41 @@
 
 
             
+            {% block content %}
+            {% endblock %}
+            {% comment %} <div > {% endcomment %}
+              {% comment %} {% block content %} {% endcomment %}
+              {% comment %} {% endblock %} {% endcomment %}
+            {% comment %} </div> {% endcomment %}
             
-            <div class="content">
-              {% block content %}
-              {% endblock %}
+            
+
+            <div class="d-flex flex-column flex-md-row text-center text-md-start justify-content-between py-4 px-4 px-xl-5 bg-danger footer">
+              <!-- Copyright -->
+              <div class="text-white mb-3 mb-md-0">
+                Copyright © <script>document.write(new Date().getFullYear())</script> All rights reserved.
+              </div>
+              <!-- Copyright -->
+            
+              <!-- Right -->
+              <div>
+                <a href="#!" class="text-white me-4">
+                  <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="#!" class="text-white me-4">
+                  <i class="fab fa-twitter"></i>
+                </a>
+                <a href="#!" class="text-white me-4">
+                  <i class="fab fa-google"></i>
+                </a>
+                <a href="#!" class="text-white">
+                  <i class="fab fa-linkedin-in"></i>
+                </a>
+              </div>
+              <!-- Right -->
             </div>
             
-            <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
-
-            <div
-          class=" d-flex flex-column flex-md-row text-center text-md-start justify-content-between py-4 px-4 px-xl-5 bg-danger fixed-bottom">
-          <!-- Copyright -->
-          <div class="text-white mb-3 mb-md-0">
-            Copyright © <script>document.write(new Date().getFullYear())</script> All rights reserved.
-          </div>
-          <!-- Copyright -->
-      
-          <!-- Right -->
-          <div>
-            <a href="#!" class="text-white me-4">
-              <i class="fab fa-facebook-f"></i>
-            </a>
-            <a href="#!" class="text-white me-4">
-              <i class="fab fa-twitter"></i>
-            </a>
-            <a href="#!" class="text-white me-4">
-              <i class="fab fa-google"></i>
-            </a>
-            <a href="#!" class="text-white">
-              <i class="fab fa-linkedin-in"></i>
-            </a>
-          </div>
-          <!-- Right -->
-        </div>
-      </section>
-    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.5.0/js/bootstrap.bundle.min.js"></script>
     <script src="/docs/5.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
       <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js" integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js" integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha" crossorigin="anonymous"></script><script src="dashboard.js"></script>
