@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block content_ticket_integration %}
+
+<style>
+    @media (min-width: 778px) {
+
+        .upperContainer{
+            display: flex;
+            background-image : url(https://coderthemes.com/hyper_2/assets/images/bg/bg-22.jpg);
+            height: 700px;
+            clip-path: polygon(50% 0,100% 0,100% 66%,18% 73%,0 86%,0 0);
+            background-position: center;
+
+
+
+        }
+
+        .countCounter{
+        
+            display: grid;
+            grid-template-columns: 50% 50%  ;
+            gap: 15px;
+            padding: 20px 50px 20px 20px;
+            grid-column-end: auto;
+            
+        
+      }
+
+      .coutItem{
+        display: flex;
+        flex-direction: column;
+        height: 130px;
+        padding: 0 10px;
+        background-color: #fff;
+        text-decoration: none;
+       
+
+      }
+
+      }
+      
+
+</style>
+
+
+<div class=" upperContainer row">
+      
+    <div class="col-12 ">
+  <div class="countCounter">
+    <a href="#" class="coutItem" >
+        <p class="text-center p-2 h5"> Total Ticket Create</p>
+        <h5 class="text-center h2"> {{ticket.count}} </h5>
+    </a>
+    <a class="coutItem" >
+        <p class="text-center text-dark p-2 h5 "> Total Ticket Unassigned</p>
+        <h5 class="text-center text-dark h2"> {{ticketunassigned.count}} </h5>
+    </a>
+    
+</div>
+
+ <div class="col-6">
+    <div class="container">
+      
+      <canvas id="myChart1" width="300" height="150"></canvas>
+
+      </div>
+  </div>
+
+
+
+
+</div>
+
+
+<div style="margin-top:-80px;" class="container mb-5 ">
+
+  <canvas id="myChart2" width="300" height="80"></canvas>
+
+</div>
+  
+ 
+</main>
+
+</div>
+
+</div>
+
+
+<script type="text/javascript">
+var ctx = document.getElementById('myChart1').getContext('2d');
+var myChart1 = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: [{% for status in status_list %} '{{ status }}', {% endfor %}],
+        datasets: [{
+            label:'Ticket Bar Chart',
+            data: [{% for number in status_number %} '{{ number }}', {% endfor %}],
+            backgroundColor:[
+              "#0000ff", "#3c3c3c","#ff0000","#00FFFF"
+            ],
+
+            borderColor: [
+              "#0000ff", "#3c3c3c","#ff0000","#00FFFF"
+
+            ],
+
+            borderWidth: 1
+        }]
+    },
+
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+})
+</script>     
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1/dist/chart.umd.min.js"></script>
+{% endblock %}

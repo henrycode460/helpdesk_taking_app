@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block content_technicianUpdate %}
+       
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Ticket Number</th>
+        <th scope="col">Customer</th>
+        <th scope="col">Title</th>
+        <th scope="col">Created On</th>
+        <th scope="col">Assigned To</th>
+        <th scope="col">Status</th>
+        <th scope="col">Created By</th>
+        <th scope="col">View</th>
+      </tr>
+    </thead>
+    <tbody>
+       
+      <tr>
+        
+        <td>{{ticket.ticket_number}}</td>
+        <td>{{ticket.customer}}</td>
+        <td>{{ticket.title}}</td>
+        <td>{{ticket.date_created}}</td>
+        <td>{{ticket.assignee}}</td>
+        {% if ticket.status == "In_Progress" %}
+        <td><span class="badge rounded-pill bg-dark" >In Progress</span></td>
+        {% elif ticket.status == "Pending" %}
+        <td><span class="badge rounded-pill bg-primary" >Pending</span></td>
+        {% elif ticket.status == "Completed" %}
+        <td><span class="badge rounded-pill bg-danger" >Completed</span></td>
+        {% endif %}
+        <td>{{ticket.created_by}}</td>
+        <td><small> <a href="{% url 'ticket_details' ticket.pk %}" >View Details</a></small></td>
+        
+      </tr>
+      
+     
+    </tbody>
+  </table>
+
+
+
+
+  <div>
+    {% if request.user.is_technician and not ticket.is_resolve %}
+ 
+    {% if ticket.technician_remark is null or blank %}
+             
+<form method = "post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  {% comment %} <input type="textarea" id="form3Example1c"  name="technician_feedback"/> {% endcomment %}
+ {% endif %}
+
+  <div class="dropdown">
+    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+      Reply
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+      {% if ticket.technician_remark is null or blank %}
+      <li><input type="submit" value="Submit" class="btn btn-light"></li>
+      {% endif %}
+      <li><a class="dropdown-item" href="{% url 'postpone_ticket' ticket.pk %}">Postpone</a></li>
+      <li><a class="dropdown-item" href="{% url 'cancel_ticket' ticket.pk %}">Cancel</a></li>
+      <li><a href="#" style="text-decoration:none;" class="dropdown-item text-danger p-3" data-bs-toggle="modal" data-bs-target="#exampleModal">Confirm Resolution</a> </li>
+    </ul>
+  </div>
+  
+</form>
+
+   
+
+</div>
+
+
+
+
+{% endif %}
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Ticket Resolution</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <h6> DO YOU WANT TO CLOSE THE TICKET?</h6>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <a type="button" href="{% url 'close_ticket' ticket.pk %}" class="btn btn-primary">Save changes</a>
+        </div>
+      </div>
+    </div>
+  </div>
+      
+
+      
+<div class="form-group">
+    {% for message in messages %}
+    <div class="alert alert-danger" role="alert">
+    {{message}}
+    </div>
+    {% endfor %}
+    </div>
+
+    <script>
+      
+      
+        var form_fields = document.getElementsByTagName('input')
+        var form_fields_select = document.getElementsByTagName('select')
+        var form_fields_textarea = document.getElementsByTagName('textarea')
+        var form_fields_form = document.getElementsByTagName('form')
+       
+        
+      
+        for(var field in form_fields){
+          form_fields[field].className += 'form-control'
+        }
+      
+        for(var field in form_fields_select){
+          form_fields_select[field].className += 'form-control'
+        }
+      
+        for(var field in form_fields_textarea){
+          form_fields_textarea[field].className += 'form-control '
+          form_fields_textarea[field].rows = '4'
+        }
+      
+      
+      </script>
+
+    {% endblock %}

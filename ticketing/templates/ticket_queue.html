@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block content_ticket_queu %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<style>
+  
+
+    .dropdown-toggle::after {
+      display: none !important;
+    }
+    
+    .dropdown-menu {
+      overflow: visible !important;
+    }
+  
+   
+    .table-container {
+      
+      overflow-x: unset !important;
+    }
+    
+    @media (max-width: 768px) {
+      input[type="text"] {
+        /* Add your desired styles here */
+        /* For example, to add the "form-control" class: */
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+      select{
+        /* Add your desired styles here */
+        /* For example, to add the "form-control" class: */
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+  
+      .pagination-container {
+        margin-top: 20px; /* Adjust the margin-top value as needed */
+      }
+      
+      
+    }
+
+
+
+</style>
+
+<div class="table-responsive table-container ">
+    <table class="table table-striped table-sm">
+        <thead>
+            <tr>
+              <th scope="col">Customer</th>
+              <th scope="col">Title</th>
+              <th scope="col">Assigned To</th> 
+              <th scope="col">Status</th>
+              <th scope="col">Created By</th>
+              {% comment %} <th scope="col">Action</th> {% endcomment %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for tickets in ticket %}
+            
+            <tr>
+              <td>{{tickets.customer}}</td>
+              <td>{{tickets.title}}</td>
+              <td>{{tickets.assignee}}</td>
+              {% if tickets.status == "In_Progress" %}
+              <td><span class="badge rounded-pill bg-dark" >In Progress</span></td>
+              {% elif tickets.status == "Pending" %}
+              <td><span class="badge rounded-pill bg-primary" >Pending</span></td>
+              {% elif tickets.status == "Completed" %}
+              <td><span class="badge rounded-pill bg-danger" >Completed</span></td>
+              {% elif tickets.status == "Postpone" %}
+              <td><span class="badge rounded-pill bg-info" >Postpone</span></td>
+              {% elif tickets.status == "Cancel" %}
+              <td><span class="badge rounded-pill bg-warning" >Cancel</span></td>
+              {% endif %}
+              <td>{{tickets.created_by}}</td>
+           <td>
+  <div class="dropdown">
+    <a class="dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <i class="fas fa-ellipsis-v"></i>
+    </a>
+    <div class="dropdown-menu dropdown-menu-right non-scrollable" aria-labelledby="dropdownMenuButton">
+        <a class="dropdown-item" href="{% url 'ticket_details' tickets.pk %}">Ticket Details</a>
+      <a class="dropdown-item" href="{% url 'accept_ticket' tickets.pk %}">Accept</a>
+      
+    </div>
+  </div>
+</td>
+   
+            </tr>
+            {% endfor %}
+       
+        
+      </tbody>
+    </table>
+  </div>
+
+
+  <script>
+    $(document).ready(function() {
+      $('.dropdown-toggle').dropdown();
+    });
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  {% endblock %}

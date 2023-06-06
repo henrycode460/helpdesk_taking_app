@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+
+{% block content_ticketdetails %}
+
+
+
+<div class="container">
+            
+
+    <h5 style="font-weight:bold;" class="text-uppercase text-center font-weight-bold mb-5">{{ticket.title}}</h5>
+
+    <div class="row text-center">
+      <div class="col-6">
+        <p style="font-weight:bold;" class="text-uppercase font-weight-bold"> Ticket Number </p>
+    <p class="h6 text-muted">{{ticket.ticket_number}}</p>
+      </div>
+      <div class="col-6">
+        <p style="font-weight:bold;" class="text-uppercase font-weight-bold"> Customer Name</p>
+        <p class="h5 text-muted">{{ticket.customer}}</p>
+          </div>
+  </div>
+
+  <div class="row text-center">
+    <div class="col-6">
+      <p style="font-weight:bold;" class="text-uppercase font-weight-bold"> Customer Care Staff </p>
+      <p class="h5 text-muted">{{ticket.created_by}}</p>
+    </div>
+    <div class="col-6">
+      <p style="font-weight:bold;" class="text-uppercase font-weight-bold"> Date Created</p>
+      <p class="h5 text-muted">{{ticket.date_created}}</p>
+        </div>
+</div>
+
+<div class="row text-center">
+  <div class="col-6">
+    <p style="font-weight:bold;" class="text-uppercase font-weight-bold"> Technician </p>
+    <p class="h5 text-muted">{{ticket.assignee}}</p>
+  </div>
+  <div class="col-6">
+    <p style="font-weight:bold;" class="text-uppercase font-weight-bold "> Status</p>
+    {% if ticket.status == "In_Progress" %}
+    <td><span class="badge  bg-dark h3" >In Progress</span></td>
+    {% elif ticket.status == "Pending" %}
+    <td><span class="badge  bg-primary h3" >Pending</span></td>
+    {% elif ticket.status == "Completed" %}
+    <td><span class="badge  bg-danger h3" >Completed</span></td>
+    {% elif ticket.status == "Postpone" %}
+    <td><span class="badge  bg-info h3" >Postpone</span></td>
+    {% elif ticket.status == "Cancel" %}
+    <td><span class="badge  bg-warning h3" >Cancel</span></td>
+    {% endif %}
+      </div>
+</div>
+    
+   
+  <div class="row text-center">
+    <div class="col-12">
+      <p style="font-weight:bold;" class="text-uppercase font-weight-bold"> Technician Remark </p>
+      <p class="">{{ticket.technician_remark}}</p>
+    </div>
+    
+</div>
+
+</div>
+
+
+
+{% if request.user.is_customer_care and not ticket.is_resolve %}
+
+<a href="{% url 'update_ticket' ticket.pk %}"  class="btn btn-primary mt-5" >Update Ticket Details</a>
+
+{% endif %}
+
+{% endblock %}

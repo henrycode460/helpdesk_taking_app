@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content_ticketinprogress %}
+
+
+
+
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Ticket Number</th>
+        <th scope="col">Customer</th>
+        <th scope="col">Title</th>
+        <th scope="col">Created On</th>
+        <th scope="col">Assigned To</th>
+        <th scope="col">Status</th>
+        <th scope="col">Created By</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {%for tickets in ticket %}
+      <tr>
+        
+        <td>{{tickets.ticket_number}}</td>
+        <td>{{tickets.customer}}</td>
+        <td>{{tickets.title}}</td>
+        <td>{{tickets.date_created}}</td>
+        <td>{{tickets.assignee}}</td>
+        {% if tickets.status == "In_Progress" %}
+        <td><span class="badge rounded-pill bg-dark" >In Progress</span></td>
+        {% elif tickets.status == "Pending" %}
+        <td><span class="badge rounded-pill bg-primary" >Pending</span></td>
+        {% elif tickets.status == "Completed" %}
+        <td><span class="badge rounded-pill bg-danger" >Completed</span></td>
+        {% endif %}
+        <td>{{tickets.created_by}}</td>
+        <td><small> <a href="{% url 'technicain_feedback' tickets.pk %}" >Action</a></small></td>
+        
+      </tr>
+      {% endfor %}
+     
+    </tbody>
+  </table>
+
+<div class="form-group">
+{% for message in messages %}
+<div class="alert alert-danger" role="alert">
+{{message}}
+</div>
+{% endfor %}
+</div>
+
+{% endblock %}

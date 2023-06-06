@@ -1,0 +1,15 @@
+
+{% extends 'base.html' %}
+
+
+{% block content_create_leave %}
+<h1>Create Leave</h1>
+<form method="POST" action="">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Submit">
+</form>
+
+
+
+        {% endblock %}
